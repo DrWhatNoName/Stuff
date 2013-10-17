@@ -1,0 +1,43 @@
+<?php
+//DB INFO
+$DB_USERNAME = "root";
+$DB_PASSWORD = "newpassword";
+$DB_DATABASE = "pbeta";
+
+//Force HTTPS connections using the HSTS header.
+$STRICT_TRANSPORT_SECURITY = true;
+
+//STS timeout in seconds
+$STS_TIMEOUT = 500;
+
+//set SECURE flag for all cookies.
+$SECURE_COOKIES = true;
+
+//Add random passwords and notepads randomly to strengthen plausible deniability.
+//safe to disable it when the website is being used a lot, as the other people's data have the same effect.
+//true - on, false - off
+$PLAUSIBLE_DENIABILITY = true;
+
+//enable or disable cookie encryption key change on every page load
+//disable for high load server
+//true - on, false - off
+$CHANGE_COOKIE_KEYS = true;
+
+//encrypts the cookie encryption key in the database (provides some extra protection of attacker has access to db and not src, i.e sqli)
+$ENCRYPT_COOKIE_KEY = true;
+
+$RNG_COUNTER_INCREMENT = 7;
+
+//KEY FOR THE RANDOM DATA GENORATOR, CAN BE CHANGED OFTEN
+$RNG_SALT = "ZSc4F5TKQYhZkUopUZj0QrNSWAmU9Vh0pRiG5dH3O0ZJaZsn7jrnLtPbplPvyC9f";
+
+//The Server's Private Key. - MUST BE 768 BITS in HEX (256 for each cipher)
+$SERVER_PRIVATE_KEY = "7AB0517D306B6ABD126657E035A622722CE1A87CC7B333C380AC68CFDDDACEB7328A8B7B035A53B554BC6E4456359AC1262E317430918A9A47D9EA0B6FCDDA57595D513B48A7EAD6B6277BEADF96D30A59BBB9DCF685BED5217BC623C1BDD981";
+
+//The Server's Private HMAC Key.
+$SERVER_HMAC_KEY = "L0rfgqFl8iBsEs8GO5Ls64sK3XPTTXzMZr2t6MtPL6cUq03EhyeRdY3p7keWNN24";
+
+//Salt to be used whenever the hash should be server-specific.
+$SERVER_MISC_SALT = "Q7iXIjm0Sy4aZfvmZ1rui9r2Kypp9h6fk79Jw3SnkUTPllD4X5UcEgw0PG6R0b3P";
+
+?>
