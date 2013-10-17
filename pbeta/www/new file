@@ -1,7 +1,0 @@
-dissalllow weak pass
-check for other setcookie
-cookie keys should be in ram (make ramtable for misc data)
-binary return option for securehash/severhash -> permutate IVS
-
-use EOTP instead of S/KEY
-
