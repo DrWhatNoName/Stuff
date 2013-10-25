@@ -12,18 +12,12 @@ define("HASH_SALT_INDEX", 2);
 define("HASH_PBKDF2_INDEX", 3);
 define("Salt",base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM)));
 
-if (function_exists("hash_pbkdf2")) {
-	function create_hash($password){
-  		//$salt = base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM));
+function create_hash($password){
+  	if (function_exists("hash_pbkdf2")) {
   		return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  Salt . ":" . 
         base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM,$password,Salt,PBKDF2_ITERATIONS,PBKDF2_HASH_BYTES,true));
-	}
-} else {
-	function create_hash($password)
-	{
-	    //format: algorithm:iterations:salt:hash
-	    //$salt = base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM));
-	    return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  Salt . ":" . 
+    } else {
+        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  Salt . ":" . 
 	    base64_encode(pbkdf2(PBKDF2_HASH_ALGORITHM,$password,Salt,PBKDF2_ITERATIONS,PBKDF2_HASH_BYTES,true));
 	}
 }
@@ -65,6 +59,9 @@ function slow_equals($a, $b)
  *
  * This implementation of PBKDF2 was originally created by https://defuse.ca
  * With improvements by http://www.variations-of-shadow.com
+ *
+ * This fucntion as been added to PHP 5.5.1 as hash_pbkdf2()
+ * See PHP docs here: http://www.php.net/manual/en/function.hash-pbkdf2.php
  */
 function pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
 {
