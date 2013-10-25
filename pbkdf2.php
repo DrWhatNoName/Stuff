@@ -24,11 +24,12 @@ define("HASH_SALT",base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_
 
 function create_hash($password)
 {
-  	if (function_exists("hash_pbkdf2"))
-  		return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
+    if (function_exists("hash_pbkdf2"))
+    	return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
     else
         return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, BKDF2_HASH_BYTES, true));
 }
+
 function validate_password($password, $good_hash)
 {
     $params = explode(":", $good_hash);
@@ -41,8 +42,7 @@ function validate_password($password, $good_hash)
 	   	return slow_equals($pbkdf2,pbkdf2($params[HASH_ALGORITHM_INDEX], $password, $params[HASH_SALT_INDEX], (int)$params[HASH_ITERATION_INDEX], strlen($pbkdf2), true));
 }
 
-// Compares two strings $a and $b in length-constant time.
-function slow_equals($a, $b)
+function slow_equals($a, $b) // Compares two strings $a and $b in length-constant time.
 {
     $diff = strlen($a) ^ strlen($b);
     for($i = 0; $i < strlen($a) && $i < strlen($b); $i++)
@@ -70,30 +70,30 @@ function slow_equals($a, $b)
  * This fucntion as been added to PHP 5.5.1 as hash_pbkdf2()
  * See PHP docs here: http://www.php.net/manual/en/function.hash-pbkdf2.php
  */
+
 function pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
 {
     $algorithm = strtolower($algorithm);
     if(!in_array($algorithm, hash_algos(), true))
         die('PBKDF2 ERROR: Invalid hash algorithm.');
+
     if($count <= 0 || $key_length <= 0)
         die('PBKDF2 ERROR: Invalid parameters.');
 
     $hash_length = strlen(hash($algorithm, "", true));
     $block_count = ceil($key_length / $hash_length);
-
     $output = "";
-    for($i = 1; $i <= $block_count; $i++) {
-        // $i encoded as 4 bytes, big endian.
-        $last = $salt . pack("N", $i);
-        // first iteration
-        $last = $xorsum = hash_hmac($algorithm, $last, $password, true);
-        // perform the other $count - 1 iterations
-        for ($j = 1; $j < $count; $j++) {
+
+    for($i = 1; $i <= $block_count; $i++) { 
+        $last = $salt . pack("N", $i);    // $i encoded as 4 bytes, big endian.
+        $last = $xorsum = hash_hmac($algorithm, $last, $password, true); // first iteration
+
+        for ($j = 1; $j < $count; $j++) {// perform the other $count - 1 iterations
             $xorsum ^= ($last = hash_hmac($algorithm, $last, $password, true));
         }
         $output .= $xorsum;
     }
-
+    
     if($raw_output)
         return substr($output, 0, $key_length);
     else
