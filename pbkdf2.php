@@ -22,8 +22,10 @@ define("HASH_SALT_INDEX", 2);
 define("HASH_PBKDF2_INDEX", 3);
 define("Salt",base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM)));
 
-function create_hash($password){
-  	if (function_exists("hash_pbkdf2")) {
+function create_hash($password)
+{
+  	if (function_exists("hash_pbkdf2"))
+    {
   		return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  Salt . ":" . 
         base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM,$password,Salt,PBKDF2_ITERATIONS,PBKDF2_HASH_BYTES,true));
     } else {
