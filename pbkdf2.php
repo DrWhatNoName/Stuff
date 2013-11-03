@@ -11,10 +11,10 @@
  *
  */
 
-define("PBKDF2_HASH_ALGORITHM", "sha512");
-define("PBKDF2_ITERATIONS", 500);
-define("PBKDF2_SALT_BYTES", 4);
-define("PBKDF2_HASH_BYTES", 64);
+define("PBKDF2_HASH_ALGORITHM", "haval256,5");
+define("PBKDF2_ITERATIONS", 50);
+define("PBKDF2_SALT_BYTES", 22);
+define("PBKDF2_HASH_BYTES", 60);
 define("HASH_SECTIONS", 4);
 define("HASH_ALGORITHM_INDEX", 0);
 define("HASH_ITERATION_INDEX", 1);
@@ -25,7 +25,7 @@ define("HASH_SALT",base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_
 function create_hash($password)
 {
     if (function_exists("hash_pbkdf2"))
-        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
+        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":\n" . base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
     else
         return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, BKDF2_HASH_BYTES, true));
 }
