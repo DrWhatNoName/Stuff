@@ -11,35 +11,40 @@
  *
  */
 
-define("PBKDF2_HASH_ALGORITHM", "haval256,5");
-define("PBKDF2_ITERATIONS", 50);
-define("PBKDF2_SALT_BYTES", 22);
-define("PBKDF2_HASH_BYTES", 60);
+
+foreach (hash_algos() as $key => $value) {
+    $algo[$value] = true;
+}
+
+define("PBKDF2_HASH_ALGORITHM", array_rand($algo));
+define("PBKDF2_ITERATIONS", mt_rand(1000,10000));
+define("PBKDF2_SALT_BYTES", mt_rand(8,16));
+define("PBKDF2_HASH_BYTES", mt_rand(24,64));
 define("HASH_SECTIONS", 4);
 define("HASH_ALGORITHM_INDEX", 0);
 define("HASH_ITERATION_INDEX", 1);
 define("HASH_SALT_INDEX", 2);
 define("HASH_PBKDF2_INDEX", 3);
-define("HASH_SALT",base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM)));
+define("HASH_SALT",mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM));
 
 function create_hash($password)
 {
     if (function_exists("hash_pbkdf2"))
-        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":\n" . base64_encode(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
+      return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  bin2hex(HASH_SALT) . ":" . bin2hex(hash_pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
     else
-        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  HASH_SALT . ":" . base64_encode(pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, BKDF2_HASH_BYTES, true));
+        return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  bin2hex(HASH_SALT) . ":" . bin2hex(pbkdf2(PBKDF2_HASH_ALGORITHM, $password, HASH_SALT, PBKDF2_ITERATIONS, PBKDF2_HASH_BYTES, true));
 }
 
 function validate_password($password, $good_hash)
 {
     $params = explode(":", $good_hash);
     if(count($params) < HASH_SECTIONS)
-       return false; 
-    $pbkdf2 = base64_decode($params[HASH_PBKDF2_INDEX]);
+       return "Invlid section count"; 
+    $pbkdf2 = hex2bin($params[HASH_PBKDF2_INDEX]);
     if (function_exists("hash_pbkdf2")) 
-        return slow_equals($pbkdf2,hash_pbkdf2($params[HASH_ALGORITHM_INDEX], $password, $params[HASH_SALT_INDEX], (int)$params[HASH_ITERATION_INDEX], strlen($pbkdf2), true));
+        return slow_equals($pbkdf2,hash_pbkdf2($params[HASH_ALGORITHM_INDEX], $password, hex2bin($params[HASH_SALT_INDEX]), (int)$params[HASH_ITERATION_INDEX], strlen($pbkdf2), true));
     else
-        return slow_equals($pbkdf2,pbkdf2($params[HASH_ALGORITHM_INDEX], $password, $params[HASH_SALT_INDEX], (int)$params[HASH_ITERATION_INDEX], strlen($pbkdf2), true));
+        return slow_equals($pbkdf2,pbkdf2($params[HASH_ALGORITHM_INDEX], $password, hex2bin($params[HASH_SALT_INDEX]), (int)$params[HASH_ITERATION_INDEX], strlen($pbkdf2), true));
 }
 
 function slow_equals($a, $b) // Compares two strings $a and $b in length-constant time.

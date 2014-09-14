@@ -1,16 +1,16 @@
 <?php 
 include "class/scrypt.class.php";
-echo "Hashing password hello with salt 1.\n\n";
+echo "Hashing password hello.\n\n";
 
-$password = new Password;
-$goodhash = $password::hash("Hello");
+//$password = new Password;
+$goodhash = Password::hash("hello");
 
 echo $goodhash."\n\n";
 echo "Checking password against hash\n";
 
-var_dump($password::check("hello",$goodhash));
+var_dump(Password::check("hello",$goodhash));
 
-if($password::check("hello",$goodhash))
+if(Password::check("hello",$goodhash))
 	echo "Hash is good\n\n";
 else
 	echo "Hash is bad\n\n";
